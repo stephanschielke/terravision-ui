@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
 const fileNames = ['main.tf', 'variables.tf', 'terraform.tfvars'] as const;
 
@@ -10,6 +10,7 @@ type Files = {
   };
 };
 
+// biome-ignore lint/suspicious/noExplicitAny: Files object is dynamically populated with proper types
 const files: any = {};
 
 for (const file of fileNames) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 type Props = {
   output: string;
@@ -22,13 +22,19 @@ const useConsole = () => {
   const streamConsoleOutput = async (stream: ReadableStream | null) => {
     const reader = stream?.getReader();
 
-    const pump = async ({ done, value }: any) => {
+    const pump = async ({
+      done,
+      value
+    }: { done: boolean; value?: Uint8Array }) => {
       if (done) {
         return;
       }
 
       const text = new TextDecoder('utf-8').decode(value);
-      const cleanText = text.replace(/\x1B\[[0-9;]*[mG]/g, ''); // Remove color codes
+      // Remove ANSI escape sequences (color codes) - ESC character (27) followed by [
+      const escChar = String.fromCharCode(27);
+      const ansiRegex = new RegExp(`${escChar}\\[[0-9;]*[mG]`, 'g');
+      const cleanText = text.replace(ansiRegex, '');
       setOutput(output => output + cleanText);
 
       await reader?.read().then(pump);
