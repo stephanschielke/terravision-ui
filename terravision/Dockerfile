@@ -19,10 +19,6 @@ COPY . /app
 RUN pip install -r requirements.txt
 RUN npm install
 
-# Install terravision CLI globally
-RUN chmod +x cli.js
-RUN npm install -g .
-
 # copy examples to shared volume mount (/data)
 COPY ./examples /data/examples
 
