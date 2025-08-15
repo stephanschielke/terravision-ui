@@ -1,20 +1,53 @@
-version: '3'
 services:
   terravision-ui:
+    container_name: terravision-ui
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '3000:3000'
+      - 3000:3000
+    environment:
+      - API_BASE_URL=http://terravision-api:8001
+      - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+    depends_on:
+      terravision-api:
+        condition: service_healthy
     volumes:
       - shared-data:/data
+    networks:
+      - terravision-network
+    healthcheck:
+      test: [CMD, wget, --quiet, --tries=1, --spider, http://localhost:3000]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
   terravision-api:
+    container_name: terravision-api
     build:
       context: ./terravision
       dockerfile: Dockerfile
     ports:
-      - '8001:8001'
+      - 8001:8001
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=app.py
     volumes:
       - shared-data:/data
+    networks:
+      - terravision-network
+    healthcheck:
+      test: [CMD, curl, -f, http://localhost:8001/health]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+networks:
+  terravision-network:
+    driver: bridge
+
 volumes:
   shared-data:
