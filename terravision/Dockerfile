@@ -1,4 +1,4 @@
-FROM ubuntu:latest AS builder
+FROM ubuntu:jammy-20240111 AS builder
 
 RUN apt-get update && apt-get install -y graphviz git python3-pip python-is-python3 wget curl lsb-release
 
@@ -19,6 +19,9 @@ COPY . /app
 RUN pip install -r requirements.txt
 RUN npm install
 
+# Install terravision CLI globally
+RUN chmod +x cli.js
+RUN npm install -g .
 
 # copy examples to shared volume mount (/data)
 COPY ./examples /data/examples

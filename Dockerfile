@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS base
+FROM node:lts-alpine3.17 AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -24,8 +24,8 @@ COPY . .
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
+# Remove the next line in case you want to OPT-IN and send telemetry during the build.
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN yarn build
 
