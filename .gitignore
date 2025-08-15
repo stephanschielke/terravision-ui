@@ -38,3 +38,6 @@ next-env.d.ts
 # python
 terravision/.venv
 terravision/data
+
+# vscode
+.vscode/settings.json
