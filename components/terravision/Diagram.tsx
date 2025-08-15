@@ -25,7 +25,7 @@ const Diagram = () => {
               alt="Output"
               className="mx-auto my-4 p-8"
               height="800"
-              src={`http://localhost:8001/terravision/output?timestamp=${Date.now()}`}
+              src={`http://terravision-api:8001/terravision/output?timestamp=${Date.now()}`}
               style={{
                 height: '100%',
                 objectFit: 'contain'

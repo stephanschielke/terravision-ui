@@ -6,13 +6,14 @@ import { useRef } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 async function toDataURL(url: string) {
+  console.log('toDataURL', url);
   const blob = await fetch(url).then(res => res.blob());
   return URL.createObjectURL(blob);
 }
 
 async function download(fileName: string) {
   const a = document.createElement('a');
-  a.href = await toDataURL('http://localhost:8001/terravision/output');
+  a.href = await toDataURL('http://terravision-api:8001/terravision/output');
   a.download = fileName;
   document.body.appendChild(a);
   a.click();

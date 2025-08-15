@@ -3,7 +3,7 @@
 import { Editor } from '@monaco-editor/react';
 import type { OnChange, OnMount } from '@monaco-editor/react';
 
-import { Files } from '@/lib/files';
+import type { Files } from '@/lib/files';
 import { useRef, useState } from 'react';
 
 import { useConsoleOutput } from '@/lib/useConsole';
@@ -43,6 +43,7 @@ const TerraformEditor = ({ files, fontFamily }: Props) => {
     clearOutput();
 
     startValidation(async () => {
+      console.log('POST /api/terravision/validate', content);
       const stream = await fetch('/api/terravision/validate', {
         method: 'POST',
         body: JSON.stringify(content)
@@ -55,6 +56,7 @@ const TerraformEditor = ({ files, fontFamily }: Props) => {
     clearOutput();
 
     startGeneration(async () => {
+      console.log('POST /api/terravision/graph', content);
       const stream = await fetch('/api/terravision/graph', {
         method: 'POST',
         body: JSON.stringify(content)
