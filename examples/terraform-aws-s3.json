@@ -1,0 +1,17 @@
+{
+  "main.tf": {
+    "name": "main.tf",
+    "language": "hcl",
+    "value": "terraform {\n  required_providers {\n    aws = {\n      source  = \"hashicorp/aws\"\n      version = \"~> 5.0\"\n    }\n    archive = {\n      source  = \"hashicorp/archive\"\n      version = \"~> 2.0\"\n    }\n  }\n}\n\nprovider \"aws\" {\n  access_key = \"test\"\n  secret_key = \"test\"\n  region     = \"us-east-1\"\n\n  skip_credentials_validation = true\n  skip_metadata_api_check     = true\n  skip_requesting_account_id  = true\n}\n\ndata \"aws_iam_policy_document\" \"assume_role\" {\n  statement {\n    effect = \"Allow\"\n\n    principals {\n      type        = \"Service\"\n      identifiers = [\"lambda.amazonaws.com\"]\n    }\n\n    actions = [\"sts:AssumeRole\"]\n  }\n}\n\nresource \"aws_iam_role\" \"iam_for_lambda\" {\n  name               = \"iam_for_lambda\"\n  assume_role_policy = data.aws_iam_policy_document.assume_role.json\n}\n\ndata \"archive_file\" \"lambda_function_payload\" {\n  type = \"zip\"\n  source {\n    filename = \"main.js\"\n    content  = <<EOF\n      exports.handler = async (event) => {\n        const response = {\n          statusCode: 200,\n          body: JSON.stringify('Hello from Lambda!'),\n        };\n        return response;\n      };\n    EOF\n  }\n  output_path = \"${path.module}/builds/lambda.zip\"\n}\n\nresource \"aws_lambda_function\" \"example\" {\n  filename      = \"builds/lambda.zip\"\n  function_name = var.function_name\n  role          = aws_iam_role.iam_for_lambda.arn\n  handler       = \"index.handler\"\n\n  source_code_hash = data.archive_file.lambda_function_payload.output_base64sha256\n  runtime          = \"nodejs18.x\"\n}"
+  },
+  "variables.tf": {
+    "name": "variables.tf",
+    "language": "hcl",
+    "value": "variable \"function_name\" {\n    description = \"Lambda function name\"\n    type = string\n}"
+  },
+  "terraform.tfvars": {
+    "name": "terraform.tfvars",
+    "language": "hcl",
+    "value": "function_name = \"my_lambda\""
+  }
+}
