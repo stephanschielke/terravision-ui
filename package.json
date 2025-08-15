@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "lefthook install"
+    "prepare": "lefthook install"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",
